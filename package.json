@@ -1,19 +1,32 @@
 {
   "name": "overleaf-ai-reviewer",
-  "version": "1.0.0",
+  "version": "0.1.0",
+  "private": true,
   "type": "module",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "files": [
-    "dist"
+  "description": "A Node.js app that drives a Claude-powered peer reviewer over a real Overleaf project via headless Playwright, reading LaTeX source and posting anchored review comments back into Overleaf.",
+  "keywords": [
+    "overleaf",
+    "latex",
+    "claude",
+    "anthropic",
+    "ai",
+    "peer-review",
+    "playwright",
+    "automation"
   ],
-  "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
-    }
-  },
+  "author": "KaanAydinli",
   "license": "AGPL-3.0-or-later",
+  "homepage": "https://github.com/KaanAydinli/OverleafAI#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KaanAydinli/OverleafAI.git"
+  },
+  "bugs": {
+    "url": "https://github.com/KaanAydinli/OverleafAI/issues"
+  },
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",

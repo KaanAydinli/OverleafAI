@@ -1,23 +1,44 @@
 # overleaf-ai-reviewer
 
-A standalone Node.js library that drives a Claude-powered peer reviewer over a
-real Overleaf project. It opens your project in a headless Playwright browser,
-reads the LaTeX source and any existing review threads, and posts anchored
-review comments back into Overleaf — following a strict
+A Node.js app that drives a Claude-powered peer reviewer over a real Overleaf
+project. It opens your project in a headless Playwright browser, reads the
+LaTeX source and any existing review threads, and posts anchored review
+comments back into Overleaf — following a strict
 `[Review] … [Suggestion] …` template.
 
-The package also exposes the lower-level building blocks (browser session,
+The codebase also exposes the lower-level building blocks (browser session,
 LaTeX parsers, Overleaf page actions) so you can wire your own flows on top.
 
-## Install
+> ⚠️ **Disclaimer.** This project automates Overleaf via a captured browser
+> session and is **not** affiliated with or endorsed by Overleaf. Automated
+> access may conflict with the
+> [Overleaf Terms of Service](https://www.overleaf.com/legal). You are solely
+> responsible for ensuring your use complies with Overleaf's ToS and with any
+> agreements covering the projects you review. Use at your own risk.
+
+## Getting started
+
+Clone the repo and install dependencies (this also installs the Chromium
+build that Playwright drives):
 
 ```bash
-npm install overleaf-ai-reviewer
-npx playwright install chromium
+git clone https://github.com/KaanAydinli/OverleafAI.git
+cd OverleafAI
+npm install
 ```
 
-You will need an Anthropic API key and an Overleaf storage-state JSON
-(captured once via the `save-session` script below).
+Copy `.env.example` to `.env` and fill in your Anthropic API key. You will
+also need an Overleaf storage-state JSON, captured once via the
+`save-session` script below.
+
+```bash
+cp .env.example .env
+npm run save-session
+npm run build
+```
+
+> Not published to npm. Treat this as application code you run locally — clone
+> it, configure it, and run it from the checkout.
 
 ## Environment
 
@@ -28,7 +49,7 @@ You will need an Anthropic API key and an Overleaf storage-state JSON
 | `HEADLESS`              | no       | `true`                 | Set to `false` to watch the automation.                                          |
 | `MAX_TOOL_CALLS`        | no       | `10`                   | Hard cap on agent tool calls per review. Can also be passed via `new OverleafAgent({ maxToolCalls })`. |
 | `OVERLEAF_SESSION_JSON` | no       | —                      | Inline storage-state JSON. Overrides `SESSIONS_DIR`.                             |
-| `SESSIONS_DIR`          | no       | `./sessions`           | Where the library looks for a `*.json` storage-state file.                       |
+| `SESSIONS_DIR`          | no       | `./sessions`           | Where the app looks for a `*.json` storage-state file.                           |
 
 Sessions are loaded with this priority: `OVERLEAF_SESSION_JSON` (parsed
 inline) → explicit path passed to `setupBrowser(sessionFile)` → the first
@@ -44,14 +65,18 @@ npm run save-session
 
 A headed browser opens at the Overleaf login page. Log in, then return to the
 terminal and press Enter. The script writes `./sessions/session.json`. Point
-the library at it via `SESSIONS_DIR` or `OVERLEAF_SESSION_JSON`.
+the app at it via `SESSIONS_DIR` or `OVERLEAF_SESSION_JSON`.
 
 ## Usage
+
+> The examples below import from the local source tree. There is no published
+> npm package — import paths assume you are working from inside this repo (or
+> from a project that has cloned it as a sibling).
 
 ### Run the full review pipeline
 
 ```ts
-import { runAIReview } from "overleaf-ai-reviewer";
+import { runAIReview } from "./src/index.js";
 
 const result = await runAIReview(
   "https://www.overleaf.com/project/abc123",
@@ -70,7 +95,7 @@ if (!result.success) {
 ### Pure LaTeX parsers (no browser)
 
 ```ts
-import { parseAuthorsFromLatex, parseTitleFromLatex } from "overleaf-ai-reviewer";
+import { parseAuthorsFromLatex, parseTitleFromLatex } from "./src/index.js";
 
 const latex = `\\title{My Paper}\\author{Alice \\and Bob}`;
 parseTitleFromLatex(latex);   // "My Paper"
@@ -83,7 +108,7 @@ parseAuthorsFromLatex(latex); // ["Alice", "Bob"]
 import {
   extractTitleFromOverleaf,
   extractAuthorsFromOverleaf,
-} from "overleaf-ai-reviewer";
+} from "./src/index.js";
 
 const title = await extractTitleFromOverleaf("https://www.overleaf.com/project/abc123");
 const authors = await extractAuthorsFromOverleaf("https://www.overleaf.com/project/abc123");
@@ -92,7 +117,7 @@ const authors = await extractAuthorsFromOverleaf("https://www.overleaf.com/proje
 ### Low-level browser session
 
 ```ts
-import { setupBrowser, cleanupBrowser } from "overleaf-ai-reviewer";
+import { setupBrowser, cleanupBrowser } from "./src/index.js";
 
 const session = await setupBrowser();
 try {
@@ -114,8 +139,8 @@ src/
               the extractTitle/extractAuthors orchestrators
   agent/      OverleafAgent, tool definitions, tool executor, system prompt
   pipeline/   runAIReview + runReviewPipeline (the high-level entry point)
-  cli/        saveSession (script, not part of the library API)
-  index.ts    public re-exports
+  cli/        saveSession (one-off script for capturing an Overleaf session)
+  index.ts    re-exports for convenient imports from the rest of the codebase
 ```
 
 ## License
