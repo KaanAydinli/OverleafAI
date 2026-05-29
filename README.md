@@ -1,4 +1,4 @@
-# overleaf-ai-reviewer
+# OverleafAI
 
 A Node.js app that drives a Claude-powered peer reviewer over a real Overleaf
 project. It opens your project in a headless Playwright browser, reads the
