@@ -9,12 +9,16 @@ comments back into Overleaf — following a strict
 The codebase also exposes the lower-level building blocks (browser session,
 LaTeX parsers, Overleaf page actions) so you can wire your own flows on top.
 
-> ⚠️ **Disclaimer.** This project automates Overleaf via a captured browser
-> session and is **not** affiliated with or endorsed by Overleaf. Automated
-> access may conflict with the
-> [Overleaf Terms of Service](https://www.overleaf.com/legal). You are solely
-> responsible for ensuring your use complies with Overleaf's ToS and with any
-> agreements covering the projects you review. Use at your own risk.
+> ⚠️ **Disclaimer (Educational/Research Use).** This repository is provided for
+> educational and research purposes only. It is **not** affiliated with or
+> endorsed by Overleaf. It automates browser actions via a captured session,
+> and such automation may conflict with the
+> [Overleaf Terms of Service](https://www.overleaf.com/legal) or applicable
+> policies.
+>
+> Do not use this project against any service unless you have explicit
+> permission and your usage is compliant with that service's terms and all
+> applicable laws and agreements. You are solely responsible for your use.
 
 ## Getting started
 
